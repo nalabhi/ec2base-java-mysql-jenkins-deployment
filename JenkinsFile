@@ -19,7 +19,7 @@ node {
 	stage('Build docker image') 
 		{
 			
-			sh 'cd /var/lib/jenkins/workspace/ec2base-ecs-jenkins-deployment'
+			sh 'cd /var/lib/jenkins/workspace/ec2base-java-mysql-jenkins-deployment'
 			sh "docker build -t ec2base-ecs:${buildNumber} ."
 			
 		}

@@ -1,0 +1,18 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "ec2-base",
+            "image": "698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-ecs:latest",
+            "cpu": 1024,
+            "memory": 1024,
+	    "portMappings": [
+                {
+                    "containerPort": 8080,
+                    "hostPort": 8080
+                }
+            ],
+            "essential": true
+        }
+    ],
+    "family": "ec2-base"
+}

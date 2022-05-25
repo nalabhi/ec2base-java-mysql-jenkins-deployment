@@ -3,35 +3,32 @@ node {
      def buildNumber = "BUILD_NUMBER"
 
      stage('Scm Checkout')
-     	{
+     	        {
      		git branch: 'main', credentialsId: 'gret', url: 'https://github.com/nalabhi/ec2base-java-mysql-jenkins-deployment.git'  
    		 }
     
     stage('Mvn Package')
     		{
-			def mvnHome = tool name: 'maven-3',type: 'maven'
-			def mvnCMD = "${mvnHome}/bin/mvn"
+		    def mvnHome = tool name: 'maven-3',type: 'maven'
+		    def mvnCMD = "${mvnHome}/bin/mvn"
 		    sh "${mvnCMD} clean package"
 		}
 
- 
-	
-	stage('Build docker image') 
+ 	stage('Build docker image') 
 		{
 			
-			sh 'cd /var/lib/jenkins/workspace/ec2base-java-mysql-jenkins-deployment'
-			sh "docker build -t ec2base-ecs:${buildNumber} ."
+		    sh 'cd /var/lib/jenkins/workspace/ec2base-java-mysql-jenkins-deployment'
+		    sh "docker build -t ec2base-ecs:${buildNumber} ."
 			
 		}
 		
 	stage ('Push Docker Image to ECR') 
 		{
 		    
-		  	sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 698788855670.dkr.ecr.us-east-1.amazonaws.com'
-			sh "docker tag ec2base-ecs:${buildNumber} 698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-ecs:latest"
-			sh 'docker push 698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-ecs:latest'  
+		     sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 698788855670.dkr.ecr.us-east-1.amazonaws.com'
+		     sh "docker tag ec2base-ecs:${buildNumber} 698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-ecs:latest"
+		     sh 'docker push 698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-ecs:latest'  
 
-		
 		}
 	
 	stage ('Run container on ECS') 

@@ -4,7 +4,7 @@ node {
 
      stage('Scm Checkout')
      	{
-     		git branch: 'main', credentialsId: 'gret', url: 'https://github.com/nalabhi/ec2base-ecs-jenkins-deployment.git'  
+     		git branch: 'main', credentialsId: 'gret', url: 'https://github.com/nalabhi/ec2base-java-mysql-jenkins-deployment.git'  
    		 }
     
     stage('Mvn Package')
@@ -65,4 +65,5 @@ node {
 		    '''
 		    
 		}
-}
+		
+ }

@@ -3,31 +3,33 @@ node {
      def buildNumber = "BUILD_NUMBER"
 
      stage('Scm Checkout')
-     	        {
+     	{
      		git branch: 'main', credentialsId: 'gret', url: 'https://github.com/nalabhi/ec2base-java-mysql-jenkins-deployment.git'  
    		 }
     
     stage('Mvn Package')
     		{
-		    def mvnHome = tool name: 'maven-3',type: 'maven'
-		    def mvnCMD = "${mvnHome}/bin/mvn"
+			def mvnHome = tool name: 'maven-3',type: 'maven'
+			def mvnCMD = "${mvnHome}/bin/mvn"
 		    sh "${mvnCMD} clean package"
 		}
 
- 	stage('Build docker image') 
+ 
+	
+	stage('Build docker image') 
 		{
 			
-		    sh 'cd /var/lib/jenkins/workspace/ec2base-java-mysql-jenkins-deployment'
-		    sh "docker build -t ec2base-ecs:${buildNumber} ."
+			sh 'cd /var/lib/jenkins/workspace/ec2base-java-mysql-jenkins-deployment'
+			sh "docker build -t ec2base-java-mysql:${buildNumber} ."
 			
 		}
 		
 	stage ('Push Docker Image to ECR') 
 		{
 		    
-		     sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 698788855670.dkr.ecr.us-east-1.amazonaws.com'
-		     sh "docker tag ec2base-ecs:${buildNumber} 698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-ecs:latest"
-		     sh 'docker push 698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-ecs:latest'  
+		  	sh 'aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 698788855670.dkr.ecr.us-east-1.amazonaws.com'
+			sh "docker tag ec2base-java-mysql:${buildNumber} 698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-java-mysql:latest"
+			sh 'docker push 698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-java-mysql:latest'  
 
 		}
 	
@@ -38,11 +40,11 @@ node {
 			set +x
 
 			aws ecs register-task-definition --cli-input-json file://web-server.json
-			OLD_TASK_ID=`aws ecs list-tasks --cluster main --desired-status RUNNING --family ec2-base | egrep "task" | tr "/" " " |  awk '{print $3}' | sed 's/"$//'`
-			TASK_REVISION=`aws ecs describe-task-definition --task-definition ec2-base | egrep "revision" | tr "/" " " | awk '{print $2}' | sed 's/"$//'`
-			aws ecs stop-task --cluster main --task ${OLD_TASK_ID}
-			ClusterUpdate=`aws ecs update-service --cluster main --service java-web-service --task-definition ec2-base --desired-count 1`
-					
+			#OLD_TASK_ID=`aws ecs list-tasks --cluster main --desired-status RUNNING --family ec2base-java-mysql | egrep "task" | tr "/" " " |  awk '{print $3}' | sed 's/"$//'`
+			#TASK_REVISION=`aws ecs describe-task-definition --task-definition ec2base-java-mysql | egrep "revision" | tr "/" " " | awk '{print $2}' | sed 's/"$//'`
+			#aws ecs stop-task --cluster main --task ${OLD_TASK_ID}
+			#ClusterUpdate=`aws ecs update-service --cluster main --service java-web-service --task-definition ec2base-java-mysql --desired-count 1`
+			ServiceCreate=`aws ecs create-service --service-name java-web-service --task-definition ec2base-java-mysql --desired-count 1`		
 			'''
 			
 		}
@@ -52,7 +54,7 @@ node {
 		    sh '''
 		    set +x
 		    
-		    Service=`aws ecs describe-task-definition --task-definition ec2-base | egrep "revision" | tr "/" " " | awk '{print $2}' | sed 's/"$//'`
+		    Service=`aws ecs describe-task-definition --task-definition ec2base-java-mysql | egrep "revision" | tr "/" " " | awk '{print $2}' | sed 's/"$//'`
 		    
 			echo "++++++++++++++++++"		
 			echo  Updated Service with new task defination: $Service	

@@ -1,7 +1,7 @@
 {
     "containerDefinitions": [
         {
-            "name": "ec2base-java-mysql",
+            "name": "ec2base-mysql",
             "image": "698788855670.dkr.ecr.us-east-1.amazonaws.com/ec2base-java-mysql:latest",
             "cpu": 1024,
             "memory": 1024,
@@ -14,5 +14,5 @@
             "essential": true
         }
     ],
-    "family": "ec2base-java-mysql"
+    "family": "ec2base-mysql"
 }

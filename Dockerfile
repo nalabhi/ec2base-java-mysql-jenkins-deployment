@@ -8,6 +8,6 @@ RUN yum install java-1.8.0-openjdk -y
 RUN java -version
 WORKDIR /opt/tomcat/webapps
 COPY target/*.war /opt/tomcat/webapps
-ENV dbDriver=com.mysql.jdbc.Driver dbConnectionUrl=jdbc:mysql://mysqldb-container:3306/collegeapp_db dbUserName=root dbPassword=root
+ENV dbDriver=com.mysql.jdbc.Driver dbConnectionUrl=jdbc:mysql://mysqldb-container:3306/collegeapp_db dbUserName=root dbPassword=user123
 EXPOSE 8080
 CMD ["/opt/tomcat/bin/catalina.sh", "run"]
